@@ -46,18 +46,26 @@ void StartScene::handleEvents()
 void StartScene::start()
 {
 	const SDL_Color blue = { 0, 0, 255, 255 };
-	m_pStartLabel = new Label("START SCENE", "Consolas", 80, blue, glm::vec2(400.0f, 40.0f));
+	const SDL_Color black = { 0, 0, 0, 255 };
+	m_pStartLabel = new Label("ASSIGNMENT 1", "Consolas", 80, blue, glm::vec2(400.0f, 40.0f));
 	m_pStartLabel->setParent(this);
 	addChild(m_pStartLabel);
 
-	m_pInstructionsLabel = new Label("Press 1 to Play", "Consolas", 40, blue, glm::vec2(400.0f, 120.0f));
+	m_pInstructionsLabel = new Label("Click Start to Play", "Consolas", 40, blue, glm::vec2(400.0f, 120.0f));
 	m_pInstructionsLabel->setParent(this);
 	addChild(m_pInstructionsLabel);
 
+	m_Vincent = new Label("Vincent Ho - 101334300", "Consolas", 20, black, glm::vec2(400.0F, 200.0f));
+	m_Vincent->setParent(this);
+	addChild(m_Vincent);
 
-	m_pShip = new Ship();
-	m_pShip->getTransform()->position = glm::vec2(400.0f, 300.0f); 
-	addChild(m_pShip); 
+	m_An = new Label("An Nguyen", "Consolas", 20, black, glm::vec2(400.0f, 230.0f));
+	m_An->setParent(this);
+	addChild(m_An);
+
+	//m_pShip = new Ship();
+	//m_pShip->getTransform()->position = glm::vec2(400.0f, 300.0f); 
+	//addChild(m_pShip); 
 
 	// Start Button
 	m_pStartButton = new Button();
