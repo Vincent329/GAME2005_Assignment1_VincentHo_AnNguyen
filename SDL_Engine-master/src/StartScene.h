@@ -24,7 +24,6 @@ private:
 	Label* m_pStartLabel{};
 	Label* m_pInstructionsLabel{};
 
-	// Labels for Vincent and An
 	Label* m_Vincent{};
 	Label* m_An{};
 

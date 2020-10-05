@@ -59,7 +59,7 @@ void StartScene::start()
 	m_Vincent->setParent(this);
 	addChild(m_Vincent);
 
-	m_An = new Label("An Nguyen", "Consolas", 20, black, glm::vec2(400.0f, 230.0f));
+	m_An = new Label("An Nguyen - 101166265", "Consolas", 20, black, glm::vec2(400.0f, 230.0f));
 	m_An->setParent(this);
 	addChild(m_An);
 
