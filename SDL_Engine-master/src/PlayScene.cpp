@@ -119,6 +119,10 @@ void PlayScene::start()
 	// Set GUI Title
 	m_guiTitle = "Play Scene";
 	
+	// Class specifically used to place a background sprite
+	m_pBackground = new Background(); 
+	addChild(m_pBackground);
+
 	// Plane Sprite
 	m_pPlaneSprite = new Plane();
 	addChild(m_pPlaneSprite);
@@ -127,6 +131,7 @@ void PlayScene::start()
 	m_pPlayer = new Player();
 	addChild(m_pPlayer);
 	m_playerFacingRight = true;
+
 
 	// Back Button
 	m_pBackButton = new Button("../Assets/textures/backButton.png", "backButton", BACK_BUTTON);
@@ -172,7 +177,6 @@ void PlayScene::start()
 	/* Instructions Label */
 	m_pInstructionsLabel = new Label("Press the backtick (`) character to toggle Debug View", "Consolas");
 	m_pInstructionsLabel->getTransform()->position = glm::vec2(Config::SCREEN_WIDTH * 0.5f, 500.0f);
-
 	addChild(m_pInstructionsLabel);
 }
 
@@ -182,9 +186,9 @@ void PlayScene::GUI_Function() const
 	ImGui::NewFrame();
 
 	// See examples by uncommenting the following - also look at imgui_demo.cpp in the IMGUI filter
-	//ImGui::ShowDemoWindow();
+	ImGui::ShowDemoWindow();
 	
-	ImGui::Begin("Your Window Title Goes Here", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar);
+	ImGui::Begin("Menu Settings", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
 
 	if(ImGui::Button("My Button"))
 	{
@@ -207,5 +211,5 @@ void PlayScene::GUI_Function() const
 	// Don't Remove this
 	ImGui::Render();
 	ImGuiSDL::Render(ImGui::GetDrawData());
-	ImGui::StyleColorsDark();
+	ImGui::StyleColorsClassic();
 }

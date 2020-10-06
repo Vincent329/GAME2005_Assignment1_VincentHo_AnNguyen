@@ -6,6 +6,7 @@
 #include "Plane.h"
 #include "Player.h"
 #include "Button.h"
+#include "Background.h"
 #include "Label.h"
 
 class PlayScene : public Scene
@@ -29,6 +30,7 @@ private:
 
 	Plane* m_pPlaneSprite;
 	Player* m_pPlayer;
+	Background* m_pBackground;
 	bool m_playerFacingRight;
 
 	// UI Items
