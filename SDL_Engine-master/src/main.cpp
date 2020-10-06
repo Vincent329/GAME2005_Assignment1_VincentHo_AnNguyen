@@ -1,3 +1,4 @@
+
 // Core Libraries
 #include <crtdbg.h>
 #include <iostream>
@@ -43,4 +44,3 @@ int main(int argc, char * args[])
 	TheGame::Instance()->clean();
 	return 0;
 }
-

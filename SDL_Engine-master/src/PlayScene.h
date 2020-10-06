@@ -6,7 +6,7 @@
 #include "Plane.h"
 #include "Player.h"
 #include "Button.h"
-#include "Background.h"
+#include "Target.h"
 #include "Label.h"
 
 class PlayScene : public Scene
@@ -21,6 +21,7 @@ public:
 	virtual void clean() override;
 	virtual void handleEvents() override;
 	virtual void start() override;
+
 private:
 	// IMGUI Function
 	void GUI_Function() const;
@@ -30,7 +31,7 @@ private:
 
 	Plane* m_pPlaneSprite;
 	Player* m_pPlayer;
-	Background* m_pBackground;
+	Target* m_pBall;
 	bool m_playerFacingRight;
 
 	// UI Items
