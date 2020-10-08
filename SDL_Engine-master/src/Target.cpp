@@ -53,9 +53,15 @@ float Target::getPixelsPerMeter()
 {
 	return m_PPM;
 }
+
 void Target::setPixelsPerMeter(float ppm)
 {
 	m_PPM = ppm;
+}
+
+void Target::setIsGravityEnabled(bool check)
+{
+	m_isGravityEnabled = check;
 }
 
 void Target::m_move()
@@ -65,8 +71,11 @@ void Target::m_move()
 	getRigidBody()->acceleration = glm::vec2(0.0f, m_gravityFactor) * m_PPM;
 
 	// affect velocity with acceleration
-	if (!m_isGravityEnabled) 	
+	if (!m_isGravityEnabled) {
 		getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
+		getRigidBody()->acceleration = glm::vec2(0.0f, 9.8f);
+		elapsedTime = 1.0f / 60.0f;
+	}
 	else {
 		/*getRigidBody()->velocity += (getRigidBody()->acceleration + gravity) * deltaTime;
 		getTransform()->position += getRigidBody()->velocity * deltaTime;*/
@@ -75,7 +84,7 @@ void Target::m_move()
 		// Pf = Pi + v*t + 1/2a*t^
 		getTransform()->position = getTransform()->position
 			+ (getRigidBody()->velocity * deltaTime)
-			+ (getRigidBody()->acceleration * (elapsedTime * elapsedTime));
+			+ ((0.5f * getRigidBody()->acceleration) * (elapsedTime * elapsedTime));
 		elapsedTime += deltaTime;
 
 	}

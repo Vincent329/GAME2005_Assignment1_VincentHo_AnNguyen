@@ -14,7 +14,6 @@ public:
 	virtual void update() override;
 	virtual void clean() override;
 
-	bool m_isGravityEnabled = false;
 
 	glm::vec2 throwSpeed;
 	glm::vec2 throwPosition;
@@ -26,11 +25,14 @@ public:
 	void setGravityFactor(float gFactor);
 	float getPixelsPerMeter();
 	void setPixelsPerMeter(float ppm);
+	void setIsGravityEnabled(bool check);
 
 private:
 	// Variables for physics
 	float m_gravityFactor = 9.8f;
 	float m_PPM = 10.0f; // Pixels per meter scale
+
+	bool m_isGravityEnabled = false;
 	
 	float deltaTime = 1.0f / 60.0f;
 	float elapsedTime = 1.0f / 60.0f;

@@ -115,7 +115,33 @@ void PlayScene::handleEvents()
 		TheGame::Instance()->changeSceneState(END_SCENE);
 	}
 }
+float PlayScene::getGravityFactor()
+{
+	return m_gravityFactor;
+}
 
+void PlayScene::setGravityFactor(float gFactor)
+{
+	m_gravityFactor = gFactor;
+}
+
+float PlayScene::getPixelsPerMeter()
+{
+	return m_PPM;
+}
+
+void PlayScene::setPixelsPerMeter(float ppm)
+{
+	m_PPM = ppm;
+}
+
+void PlayScene::resetValues()
+{
+	m_gravityFactor = 9.8f;
+	gravityFactor = &m_gravityFactor;
+	m_PPM = 10.0f;
+	p_PPM = &m_PPM;
+}
 void PlayScene::start()
 {
 	TextureManager::Instance()->load("../Assets/textures/Background.png", "background");
@@ -182,7 +208,7 @@ void PlayScene::start()
 	addChild(m_pInstructionsLabel);
 }
 
-void PlayScene::GUI_Function() const
+void PlayScene::GUI_Function() 
 {
 	// Always open with a NewFrame
 	ImGui::NewFrame();
@@ -201,19 +227,25 @@ void PlayScene::GUI_Function() const
 	ImGui::Separator();
 
 	static bool isGravityEnabled = false;
-	if (ImGui::Checkbox("Gravity", &isGravityEnabled)) // toggling gravity with a checkbox
+	if (ImGui::Checkbox("Gravity Enabled", &isGravityEnabled)) // toggling gravity with a checkbox
 	{
-		m_pBall->m_isGravityEnabled = isGravityEnabled;
-		std::cout << "Gravity Enabled: " << m_pBall->m_isGravityEnabled << std::endl;
+		m_pBall->setIsGravityEnabled(isGravityEnabled);
 		m_pBall->getTransform()->position = m_pPlayer->getTransform()->position;
 		m_pBall->getTransform()->position.x += m_pBall->getWidth();
 	}
 
-	ImGui::PushItemWidth(80);
-	if (ImGui::SliderFloat("Gravity", gravityFactor, 0.1f, 30.0f, "%.1f"))
+	ImGui::SameLine();
+
+	if (ImGui::Button("Reset All"))
 	{
-		m_pBall->setGravityFactor(m_gravityFactor);
-		std::cout << "Ball Gravity: " << m_pBall->getGravityFactor() << std::endl;
+		isGravityEnabled = false;
+		m_pBall->setIsGravityEnabled(isGravityEnabled);
+		m_pPlayer->getTransform()->position = glm::vec2(100.0f, 400.0f);
+		m_pBall->getTransform()->position = m_pPlayer->getTransform()->position;
+		m_pBall->getTransform()->position.x += m_pBall->getWidth();
+		resetValues();
+		m_pBall->setGravityFactor(9.8f);
+		m_pBall->setPixelsPerMeter(10.0f);
 	}
 
 	if (ImGui::SliderFloat("Pixels Per Meter", p_PPM, 0.1f, 30.0f, "%.1f"))
@@ -222,7 +254,12 @@ void PlayScene::GUI_Function() const
 		std::cout << "Pixels Per Meter: " << m_pBall->getPixelsPerMeter() << std::endl;
 
 	}
-	
+
+	if (ImGui::SliderFloat("Gravity", gravityFactor, 0.1f, 30.0f, "%.1f"))
+	{
+		m_pBall->setGravityFactor(m_gravityFactor);
+	}
+
 	// slider for person 
 	// CHANGE NOTES: turn this into a stormtrooper instead of player
 	static int xPlayerPos = 300;

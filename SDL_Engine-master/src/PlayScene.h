@@ -22,9 +22,15 @@ public:
 	virtual void handleEvents() override;
 	virtual void start() override;
 
+	// Getter and Setter
+	float getGravityFactor();
+	void setGravityFactor(float gFactor);
+	float getPixelsPerMeter();
+	void setPixelsPerMeter(float ppm);
+
 private:
 	// IMGUI Function
-	void GUI_Function() const;
+	void GUI_Function();
 	std::string m_guiTitle;
 	
 	glm::vec2 m_mousePosition;
@@ -39,7 +45,7 @@ private:
 	Button* m_pNextButton;
 	Label* m_pInstructionsLabel;
 
-	// Variables for physics
+	// Variables to pass into the Target/Detonator
 	float m_gravityFactor = 9.8f;
 	float* gravityFactor = &m_gravityFactor;
 	float m_PPM = 10.0f; // Pixels per meter scale
@@ -48,6 +54,7 @@ private:
 	// timing variables
 	const int FPS = 60;
 	const float deltaTime = 1 / FPS; // adjust by time
+	void resetValues();
 };
 
 #endif /* defined (__PLAY_SCENE__) */
