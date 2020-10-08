@@ -39,16 +39,46 @@ void Target::clean()
 {
 }
 
+float Target::getGravityFactor()
+{
+	return m_gravityFactor;
+}
+
+void Target::setGravityFactor(float gFactor)
+{
+	m_gravityFactor = gFactor;
+}
+
+float Target::getPixelsPerMeter()
+{
+	return m_PPM;
+}
+void Target::setPixelsPerMeter(float ppm)
+{
+	m_PPM = ppm;
+}
+
 void Target::m_move()
 {
-	float deltaTime = 1.0f / 60.0f;
-	glm::vec2 gravity = glm::vec2(0, 9.8f);
+	// multiplying velocity and acceleration in the meters
+	getRigidBody()->velocity = glm::vec2(0.0f, 0.0f) * m_PPM;
+	getRigidBody()->acceleration = glm::vec2(0.0f, m_gravityFactor) * m_PPM;
 
 	// affect velocity with acceleration
-	//if (!m_isGravityEnabled) 	getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
-	
-	getRigidBody()->velocity += (getRigidBody()->acceleration + gravity) * deltaTime;
-	getTransform()->position += getRigidBody()->velocity * deltaTime;
+	if (!m_isGravityEnabled) 	
+		getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
+	else {
+		/*getRigidBody()->velocity += (getRigidBody()->acceleration + gravity) * deltaTime;
+		getTransform()->position += getRigidBody()->velocity * deltaTime;*/
+		
+		// new logic
+		// Pf = Pi + v*t + 1/2a*t^
+		getTransform()->position = getTransform()->position
+			+ (getRigidBody()->velocity * deltaTime)
+			+ (getRigidBody()->acceleration * (elapsedTime * elapsedTime));
+		elapsedTime += deltaTime;
+
+	}
 }
 
 void Target::m_checkBounds()
