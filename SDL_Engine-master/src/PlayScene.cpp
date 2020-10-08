@@ -30,6 +30,10 @@ void PlayScene::draw()
 
 void PlayScene::update()
 {
+	if (isMoving)
+	{
+		m_pBall->m_move();
+	}
 	updateDisplayList();
 }
 
@@ -138,10 +142,10 @@ void PlayScene::setPixelsPerMeter(float ppm)
 void PlayScene::resetValues()
 {
 	m_gravityFactor = 9.8f;
-	gravityFactor = &m_gravityFactor;
 	m_PPM = 10.0f;
-	p_PPM = &m_PPM;
+	m_Angle = 0.0f;
 }
+
 void PlayScene::start()
 {
 	TextureManager::Instance()->load("../Assets/textures/Background.png", "background");
@@ -208,7 +212,7 @@ void PlayScene::start()
 	addChild(m_pInstructionsLabel);
 }
 
-void PlayScene::GUI_Function() 
+void PlayScene::GUI_Function()
 {
 	// Always open with a NewFrame
 	ImGui::NewFrame();
@@ -220,8 +224,8 @@ void PlayScene::GUI_Function()
 
 	if(ImGui::Button("Throw"))
 	{
-		std::cout << "My Button Pressed" << std::endl;
-		m_pBall->m_move();
+		isMoving = (isMoving) ? false : true;
+		std::cout << "Is moving: " << isMoving << std::endl;
 	}
 
 	ImGui::Separator();
@@ -230,8 +234,7 @@ void PlayScene::GUI_Function()
 	if (ImGui::Checkbox("Gravity Enabled", &isGravityEnabled)) // toggling gravity with a checkbox
 	{
 		m_pBall->setIsGravityEnabled(isGravityEnabled);
-		m_pBall->getTransform()->position = m_pPlayer->getTransform()->position;
-		m_pBall->getTransform()->position.x += m_pBall->getWidth();
+		
 	}
 
 	ImGui::SameLine();
@@ -240,24 +243,30 @@ void PlayScene::GUI_Function()
 	{
 		isGravityEnabled = false;
 		m_pBall->setIsGravityEnabled(isGravityEnabled);
+		resetValues();
 		m_pPlayer->getTransform()->position = glm::vec2(100.0f, 400.0f);
 		m_pBall->getTransform()->position = m_pPlayer->getTransform()->position;
 		m_pBall->getTransform()->position.x += m_pBall->getWidth();
-		resetValues();
 		m_pBall->setGravityFactor(9.8f);
 		m_pBall->setPixelsPerMeter(10.0f);
 	}
 
-	if (ImGui::SliderFloat("Pixels Per Meter", p_PPM, 0.1f, 30.0f, "%.1f"))
+	if (ImGui::SliderFloat("Pixels Per Meter", &m_PPM, 0.1f, 30.0f, "%.1f"))
 	{
 		m_pBall->setPixelsPerMeter(m_PPM);
 		std::cout << "Pixels Per Meter: " << m_pBall->getPixelsPerMeter() << std::endl;
 
 	}
 
-	if (ImGui::SliderFloat("Gravity", gravityFactor, 0.1f, 30.0f, "%.1f"))
+	if (ImGui::SliderFloat("Gravity", &m_gravityFactor, 0.1f, 30.0f, "%.1f"))
 	{
 		m_pBall->setGravityFactor(m_gravityFactor);
+		std::cout << "Gravity Factor: " << m_pBall->getGravityFactor() << std::endl;
+	}
+
+	if (ImGui::SliderFloat("Kick Angle", &m_Angle, 0.0f, 90.0f, "%.1f"))
+	{
+
 	}
 
 	// slider for person 

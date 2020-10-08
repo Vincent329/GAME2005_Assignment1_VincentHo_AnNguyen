@@ -28,6 +28,8 @@ public:
 	float getPixelsPerMeter();
 	void setPixelsPerMeter(float ppm);
 
+	bool isMoving = false;
+
 private:
 	// IMGUI Function
 	void GUI_Function();
@@ -47,9 +49,8 @@ private:
 
 	// Variables to pass into the Target/Detonator
 	float m_gravityFactor = 9.8f;
-	float* gravityFactor = &m_gravityFactor;
 	float m_PPM = 10.0f; // Pixels per meter scale
-	float* p_PPM = &m_PPM;
+	float m_Angle = 0.0f; // anngle
 
 	// timing variables
 	const int FPS = 60;

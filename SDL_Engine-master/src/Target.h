@@ -31,15 +31,15 @@ private:
 	// Variables for physics
 	float m_gravityFactor = 9.8f;
 	float m_PPM = 10.0f; // Pixels per meter scale
+	float m_Angle = 0.0f;
+	float m_velocity = 0.0f;
+	float m_velocityX = 0.0f;
+	float m_velocityY = 0.0f;
 
 	bool m_isGravityEnabled = false;
 	
 	float deltaTime = 1.0f / 60.0f;
 	float elapsedTime = 1.0f / 60.0f;
-
-	glm::vec2 m_finalPosition = glm::vec2(0.0f, 0.0f);
-	glm::vec2 m_velocity = glm::vec2(0.0f, 0.0f);
-	glm::vec2 m_acceleration = glm::vec2(0.0f, 0.0f);
 
 	void m_checkBounds();
 	void m_reset();
