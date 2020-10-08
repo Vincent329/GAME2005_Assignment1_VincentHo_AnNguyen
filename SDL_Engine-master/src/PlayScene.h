@@ -38,6 +38,16 @@ private:
 	Button* m_pBackButton;
 	Button* m_pNextButton;
 	Label* m_pInstructionsLabel;
+
+	// Variables for physics
+	float m_gravityFactor = 9.8f;
+	float* gravityFactor = &m_gravityFactor;
+	float m_PPM = 10.0f; // Pixels per meter scale
+	float* p_PPM = &m_PPM;
+
+	// timing variables
+	const int FPS = 60;
+	const float deltaTime = 1 / FPS; // adjust by time
 };
 
 #endif /* defined (__PLAY_SCENE__) */

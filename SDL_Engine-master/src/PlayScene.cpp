@@ -1,6 +1,7 @@
 #include "PlayScene.h"
 #include "Game.h"
 #include "EventManager.h"
+#include "Util.h"
 
 // required for IMGUI
 #include "imgui.h"
@@ -120,13 +121,7 @@ void PlayScene::start()
 	TextureManager::Instance()->load("../Assets/textures/Background.png", "background");
 
 	// Set GUI Title
-	m_guiTitle = "Play Scene";
-	
-	// Class specifically used to place a background sprite
-	/*m_pBackground = new Background(); 
-	addChild(m_pBackground);*/
-
-	
+	m_guiTitle = "Play Scene";	
 
 	// Player Sprite
 	m_pPlayer = new Player();
@@ -135,12 +130,14 @@ void PlayScene::start()
 
 	// Ball sprite
 	m_pBall = new Target();
+	m_pBall->getTransform()->position = m_pPlayer->getTransform()->position;
+	m_pBall->getTransform()->position.x += m_pBall->getWidth();
 	addChild(m_pBall);
 
 
 	// Back Button
 	m_pBackButton = new Button("../Assets/textures/backButton.png", "backButton", BACK_BUTTON);
-	m_pBackButton->getTransform()->position = glm::vec2(300.0f, 400.0f);
+	m_pBackButton->getTransform()->position = glm::vec2(50.0f, 550.0f);
 	m_pBackButton->addEventListener(CLICK, [&]()-> void
 	{
 		m_pBackButton->setActive(false);
@@ -160,7 +157,7 @@ void PlayScene::start()
 
 	// Next Button
 	m_pNextButton = new Button("../Assets/textures/nextButton.png", "nextButton", NEXT_BUTTON);
-	m_pNextButton->getTransform()->position = glm::vec2(500.0f, 400.0f);
+	m_pNextButton->getTransform()->position = glm::vec2(750.0f, 550.0f);
 	m_pNextButton->addEventListener(CLICK, [&]()-> void
 	{
 		m_pNextButton->setActive(false);
@@ -191,47 +188,64 @@ void PlayScene::GUI_Function() const
 	ImGui::NewFrame();
 
 	// See examples by uncommenting the following - also look at imgui_demo.cpp in the IMGUI filter
-	ImGui::ShowDemoWindow();
+	// ImGui::ShowDemoWindow();
 	
 	ImGui::Begin("Physics Controls", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
 
 	if(ImGui::Button("Throw"))
 	{
 		std::cout << "My Button Pressed" << std::endl;
-		m_pBall->doThrow();
+		m_pBall->m_move();
 	}
 
 	ImGui::Separator();
 
-	
-	//static float float3[3] = { 0.0f, 1.0f, 1.5f };
-	//if(ImGui::SliderFloat3("My Slider", float3, 0.0f, 2.0f))
-	//{
-	//	std::cout << float3[0] << std::endl;
-	//	std::cout << float3[1] << std::endl;
-	//	std::cout << float3[2] << std::endl;
-	//	std::cout << "---------------------------\n";
-	//}
-
 	static bool isGravityEnabled = false;
-	if (ImGui::Checkbox("Gravity", &isGravityEnabled))
+	if (ImGui::Checkbox("Gravity", &isGravityEnabled)) // toggling gravity with a checkbox
 	{
 		m_pBall->m_isGravityEnabled = isGravityEnabled;
+		std::cout << "Gravity Enabled: " << m_pBall->m_isGravityEnabled << std::endl;
+		m_pBall->getTransform()->position = m_pPlayer->getTransform()->position;
+		m_pBall->getTransform()->position.x += m_pBall->getWidth();
 	}
 
-	// slider for person
+	ImGui::PushItemWidth(80);
+	if (ImGui::SliderFloat("Gravity", gravityFactor, 0.1f, 30.0f, "%.1f"))
+	{
+		m_pBall->setGravityFactor(m_gravityFactor);
+		std::cout << "Ball Gravity: " << m_pBall->getGravityFactor() << std::endl;
+	}
+
+	if (ImGui::SliderFloat("Pixels Per Meter", p_PPM, 0.1f, 30.0f, "%.1f"))
+	{
+		m_pBall->setPixelsPerMeter(m_PPM);
+		std::cout << "Pixels Per Meter: " << m_pBall->getPixelsPerMeter() << std::endl;
+
+	}
+	
+	// slider for person 
+	// CHANGE NOTES: turn this into a stormtrooper instead of player
 	static int xPlayerPos = 300;
 	if (ImGui::SliderInt("Player Position X", &xPlayerPos, 0, 800)) {
 		m_pPlayer->getTransform()->position.x = xPlayerPos;
-		m_pBall->getTransform()->position = glm::vec2(xPlayerPos, 400);
+		m_pBall->getTransform()->position = glm::vec2(xPlayerPos+m_pBall->getWidth(), 400);
 	}
 
+	// change this to an angle slider between 0 and 180
 	static float velocity[2] = { 0,0 };
 	if (ImGui::SliderFloat2("Throw Speed", velocity, 0, 500))
 	{
 		m_pBall->throwPosition = m_pPlayer->getTransform()->position;
-		m_pBall->throwSpeed = glm::vec2(velocity[0], velocity[1]);
+		// CHANGE THIS LOGIC, NEEDS TO THROW BY ANGLE
+		m_pBall->throwSpeed = glm::vec2(velocity[0], -velocity[1]);
+		
 	}
+	
+	/*static float angle = 0;
+	if (ImGui::SliderFloat("Angle", &angle, 0, 90.0f))
+	{
+	}*/
+
 	ImGui::End();
 	ImGui::EndFrame();
 
