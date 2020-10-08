@@ -218,7 +218,7 @@ void PlayScene::GUI_Function()
 	ImGui::NewFrame();
 
 	// See examples by uncommenting the following - also look at imgui_demo.cpp in the IMGUI filter
-	// ImGui::ShowDemoWindow();
+	ImGui::ShowDemoWindow();
 	
 	ImGui::Begin("Physics Controls", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
 
@@ -242,6 +242,7 @@ void PlayScene::GUI_Function()
 	if (ImGui::Button("Reset All"))
 	{
 		isGravityEnabled = false;
+		isMoving = false;
 		m_pBall->setIsGravityEnabled(isGravityEnabled);
 		resetValues();
 		m_pPlayer->getTransform()->position = glm::vec2(100.0f, 400.0f);
