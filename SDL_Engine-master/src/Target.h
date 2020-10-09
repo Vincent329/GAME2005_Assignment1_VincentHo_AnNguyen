@@ -41,10 +41,11 @@ public:
 	void resetElapsedTime();
 
 private:
-	// Variables for physics
-	float m_gravityFactor = 9.8f;
-	float m_PPM = 10.0f; // Pixels per meter scale
-	float m_Angle = 0.0f;
+	// Variables for physics on the ball (passed in from PlayScene.cpp)
+
+	float m_gravityFactor = 9.8f; // Gravity Factor
+	float m_PPM = 5.0f; // Pixels per meter scale
+	float m_Angle = 0.0f; // Launching angle
 	float m_velocity = 0.0f;
 	float m_velocityX = 0.0f;
 	float m_velocityY = 0.0f;

@@ -4,9 +4,9 @@
 
 Target::Target()
 {
-	TextureManager::Instance()->load("../Assets/textures/Circle.png","circle");
+	TextureManager::Instance()->load("../Assets/textures/detonator.png","detonator");
 
-	const auto size = TextureManager::Instance()->getTextureSize("circle");
+	const auto size = TextureManager::Instance()->getTextureSize("detonator");
 	setWidth(size.x);
 	setHeight(size.y);
 	getTransform()->position = glm::vec2(100.0f, 100.0f);
@@ -26,7 +26,7 @@ void Target::draw()
 	const auto y = getTransform()->position.y;
 
 	// draw the target
-	TextureManager::Instance()->draw("circle", x, y, 0, 255, true);
+	TextureManager::Instance()->draw("detonator", x, y, 0, 255, true);
 }
 
 void Target::update()
@@ -110,7 +110,20 @@ void Target::m_move()
 	getRigidBody()->velocity = glm::vec2(0.0f, 0.0f) * m_PPM;
 	getRigidBody()->acceleration = glm::vec2(0.0f, m_gravityFactor) * m_PPM;
 
-	if (m_isGravityEnabled && m_isThrown){
+	if (!m_isGravityEnabled && m_isThrown)
+	{
+		m_velocityX = (m_velocity * m_PPM) * cos(glm::radians(m_Angle));
+		m_velocityY = (m_velocity * m_PPM) * -sin(glm::radians(m_Angle));
+		
+		getRigidBody()->velocity = glm::vec2(m_velocityX, m_velocityY);
+
+		getTransform()->position = getTransform()->position
+			+ (getRigidBody()->velocity * elapsedTime);
+
+		std::cout << "Velocity X: " << getRigidBody()->velocity.x << " Y:" << getRigidBody()->velocity.y << std::endl;
+		std::cout << "Acceleration X: " << getRigidBody()->acceleration.x << " Y:" << getRigidBody()->acceleration.y << std::endl;
+	}
+	else if (m_isGravityEnabled && m_isThrown){
 		
 		// new logic
 		// velocity components\

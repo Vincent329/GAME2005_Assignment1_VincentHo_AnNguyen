@@ -49,7 +49,7 @@ private:
 
 	// Physics variables to pass into the Target/Detonator
 	float m_gravityFactor = 9.8f; // earth gravity, positive because going downwards is positive
-	float m_PPM = 10.0f; // Pixels per meter scale
+	float m_PPM = 5.0f; // Pixels per meter scale
 	float m_Angle = 0.0f; // Launch Angle
 	float m_velocity = 0.0f; // initial velocity
 	/*float m_velocityX = 0.0f;
