@@ -37,6 +37,10 @@ public:
 	void setVelocityX(float velocityX);
 	float getVelocityY();
 	void setVelocityY(float velocityY);
+	
+	// Initial Position
+	glm::vec2 getInitialPosition();
+	void setInitialPosition(glm::vec2 initPos);
 
 	
 	// Resetting purposes
@@ -47,7 +51,9 @@ private:
 
 	float m_gravityFactor = 9.8f; // Gravity Factor
 	float m_PPM = 5.0f; // Pixels per meter scale
-	float m_Angle = 0.0f; // Launching angle
+	float m_Angle = 0.0f; // Launching 
+
+	glm::vec2 initialPosition;
 	float m_velocity = 0.0f;
 	float m_velocityX = 0.0f;
 	float m_velocityY = 0.0f;
@@ -55,9 +61,8 @@ private:
 	bool m_isGravityEnabled = false;
 	bool m_isThrown = false;
 	
-	float deltaTime = 1.0f / 60.0f;
-	float elapsedTime = 1.0f / 60.0f;
-
+	float deltaTime = 1.0f / 30.0f;
+	float elapsedTime = 1.0f / 30.0f;
 
 	void m_checkBounds();
 	void m_reset();

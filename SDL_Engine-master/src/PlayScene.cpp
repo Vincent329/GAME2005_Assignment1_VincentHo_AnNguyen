@@ -1,4 +1,4 @@
-#include "PlayScene.h"
+﻿#include "PlayScene.h"
 #include "Game.h"
 #include "EventManager.h"
 #include "Util.h"
@@ -147,25 +147,25 @@ void PlayScene::handleEvents()
 		TheGame::Instance()->changeSceneState(END_SCENE);
 	}
 }
-float PlayScene::getGravityFactor()
-{
-	return m_gravityFactor;
-}
-
-void PlayScene::setGravityFactor(float gFactor)
-{
-	m_gravityFactor = gFactor;
-}
-
-float PlayScene::getPixelsPerMeter()
-{
-	return m_PPM;
-}
-
-void PlayScene::setPixelsPerMeter(float ppm)
-{
-	m_PPM = ppm;
-}
+//float PlayScene::getGravityFactor()
+//{
+//	return m_gravityFactor;
+//}
+//
+//void PlayScene::setGravityFactor(float gFactor)
+//{
+//	m_gravityFactor = gFactor;
+//}
+//
+//float PlayScene::getPixelsPerMeter()
+//{
+//	return m_PPM;
+//}
+//
+//void PlayScene::setPixelsPerMeter(float ppm)
+//{
+//	m_PPM = ppm;
+//}
 
 void PlayScene::resetValues()
 {
@@ -201,48 +201,10 @@ void PlayScene::start()
 	m_pShip->getTransform()->position.y = m_pPlayer->getTransform()->position.y;
 	addChild(m_pShip);
 
-	// get rid of buttons
-
-	//// Back Button
-	//m_pBackButton = new Button("../Assets/textures/backButton.png", "backButton", BACK_BUTTON);
-	//m_pBackButton->getTransform()->position = glm::vec2(50.0f, 550.0f);
-	//m_pBackButton->addEventListener(CLICK, [&]()-> void
-	//{
-	//	m_pBackButton->setActive(false);
-	//	TheGame::Instance()->changeSceneState(START_SCENE);
-	//});
-
-	//m_pBackButton->addEventListener(MOUSE_OVER, [&]()->void
-	//{
-	//	m_pBackButton->setAlpha(128);
-	//});
-
-	//m_pBackButton->addEventListener(MOUSE_OUT, [&]()->void
-	//{
-	//	m_pBackButton->setAlpha(255);
-	//});
-	//addChild(m_pBackButton);
-
-	//// Next Button...
-	//m_pNextButton = new Button("../Assets/textures/nextButton.png", "nextButton", NEXT_BUTTON);
-	//m_pNextButton->getTransform()->position = glm::vec2(750.0f, 550.0f);
-	//m_pNextButton->addEventListener(CLICK, [&]()-> void
-	//{
-	//	m_pNextButton->setActive(false);
-	//	TheGame::Instance()->changeSceneState(END_SCENE);
-	//});
-
-	//m_pNextButton->addEventListener(MOUSE_OVER, [&]()->void
-	//{
-	//	m_pNextButton->setAlpha(128);
-	//});
-
-	//m_pNextButton->addEventListener(MOUSE_OUT, [&]()->void
-	//{
-	//	m_pNextButton->setAlpha(255);
-	//});
-
-	//addChild(m_pNextButton{);
+	// import reticle
+	m_pReticle = new Reticle();
+	m_pReticle->getTransform()->position.x = reticleDistance(m_velocity, m_Angle);
+	addChild(m_pReticle);
 
 	/* Instructions Label */
 	m_pInstructionsLabel = new Label("Press the backtick (`) character to toggle Debug View", "Consolas");
@@ -252,6 +214,27 @@ void PlayScene::start()
 	m_PPMdisplay = new Label("PPM: " + std::to_string(m_PPM), "Consolas", 10, white, glm::vec2(50.0f, 540.0f));
 	addChild(m_PPMdisplay);
 }
+
+float PlayScene::reticleDistance(float velocity, float angle)
+{
+
+	// R = (v^2)sin(2(theta))/g
+	// remember to multiply by the scale function
+	float testAngle = 30.0f;
+	float testVelocity = 100.0f;
+	float testRange = ((((testVelocity) * (testVelocity)) * sin(glm::radians(2 * testAngle))) / m_gravityFactor);
+	float range = ((((velocity * m_PPM) * (velocity*m_PPM)) * sin(glm::radians(2 * angle))) / (m_gravityFactor*m_PPM));
+	std::cout << "Range: " << range << std::endl;
+	return m_pBall->getTransform()->position.x + range;
+}
+
+//float PlayScene::angleChange(float distance, float velocity)
+//{
+//	float angleInRads;
+//	angleInRads = asin((m_gravityFactor * m_PPM) * (distance * m_PPM))
+//	return 0.0f;
+//}
+
 
 void PlayScene::GUI_Function()
 {
@@ -304,7 +287,10 @@ void PlayScene::GUI_Function()
 		m_pBall->setGravityFactor(m_gravityFactor);
 		m_pBall->setPixelsPerMeter(m_PPM);
 		m_pBall->setAngle(m_Angle);
+		m_pBall->setInitialPosition(m_pBall->getTransform()->position);
 		m_pBall->resetElapsedTime();
+		m_pReticle->getTransform()->position.x = reticleDistance(m_velocity, m_Angle);
+
 	}
 
 	// Pixels per meter scale
@@ -312,7 +298,7 @@ void PlayScene::GUI_Function()
 	{
 		m_pBall->setPixelsPerMeter(m_PPM);
 		std::cout << "Pixels Per Meter: " << m_pBall->getPixelsPerMeter() << std::endl;
-
+		m_pReticle->getTransform()->position.x = reticleDistance(m_velocity, m_Angle);
 	}
 	
 	// Modifiable Gravity Coefficient
@@ -329,9 +315,9 @@ void PlayScene::GUI_Function()
 	{
 		m_pBall->setAngle(m_Angle);
 		std::cout << "Angle value: " << m_pBall->getAngle() << std::endl;
+		m_pReticle->getTransform()->position.x = reticleDistance(m_velocity, m_Angle);
 	}
 
-	static bool switchAngle = false;
 	if (ImGui::Button("Switch Angle"))
 	{
 		m_Angle = 90 - m_Angle;
@@ -339,13 +325,12 @@ void PlayScene::GUI_Function()
 		std::cout << "Angle value: " << m_pBall->getAngle() << std::endl;
 	}
 	
-
-	
 	// Velocity for the ball to be kicked
-	if (ImGui::SliderFloat("Initial Velocity: ", &m_velocity, 0.0f, 500.0f))
+	if (ImGui::SliderFloat("Initial Velocity: ", &m_velocity, 0.0f, 75.0f))
 	{
 		m_pBall->setVelocity(m_velocity);
 		std::cout << "Initial Velocity: " << m_pBall->getVelocity() << std::endl;
+		m_pReticle->getTransform()->position.x = reticleDistance(m_velocity, m_Angle);
 	}
 
 	// display the player's position in with regards to the corresponding Pixels Per Meter
@@ -360,6 +345,9 @@ void PlayScene::GUI_Function()
 		
 			// Ball moves along with player
 		m_pBall->getTransform()->position = glm::vec2(xPlayerPos+m_pBall->getWidth(), 400);
+		m_pBall->setInitialPosition(m_pBall->getTransform()->position);
+		std::cout << "Initial Position = X: " << m_pBall->getTransform()->position.x << " Y: " << m_pBall->getTransform()->position.y << std::endl;
+		m_pReticle->getTransform()->position.x = reticleDistance(m_velocity, m_Angle);
 	}
 
 	static int xEnemyPos = 700;

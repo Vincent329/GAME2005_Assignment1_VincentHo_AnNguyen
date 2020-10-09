@@ -8,6 +8,7 @@
 #include "Ship.h"
 #include "Button.h"
 #include "Target.h"
+#include "Reticle.h"
 #include "Label.h"
 #include "Util.h"
 
@@ -25,12 +26,22 @@ public:
 	virtual void start() override;
 
 	// Getter and Setter
-	float getGravityFactor();
-	void setGravityFactor(float gFactor);
-	float getPixelsPerMeter();
-	void setPixelsPerMeter(float ppm);
+	//float getGravityFactor();
+	//void setGravityFactor(float gFactor);
+	//float getPixelserMeter();
+	//void setPixelsPerMeter(float ppm);
 
 	bool isMoving = false;
+
+	// Horizontal Range for Reticle aiming;
+	// Distance
+	float reticleDistance(float velocity, float angle);
+
+	// Angle
+	// float angleChange(float distance, float velocity);
+
+	// Velocity
+	// float velocityChange(float distance, float angle);
 
 private:
 	// IMGUI Function
@@ -39,7 +50,8 @@ private:
 	
 	glm::vec2 m_mousePosition;
 
-	Ship* m_pShip;
+	Reticle* m_pReticle;
+	Ship* m_pShip; // for testing purposes
 	Plane* m_pPlaneSprite;
 	Player* m_pPlayer;
 	Target* m_pBall;
@@ -60,8 +72,6 @@ private:
 	float m_velocityY = 0.0f;*/
 
 	// timing variables
-	const int FPS = 60;
-	const float deltaTime = 1 / FPS; // adjust by time
 	void resetValues();
 };
 
