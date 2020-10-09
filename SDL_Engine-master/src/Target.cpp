@@ -98,6 +98,16 @@ void Target::setVelocityX(float velocityX)
 	m_velocityX = velocityX;
 }
 
+float Target::getVelocityY()
+{
+	return m_velocityY;
+}
+
+void Target::setVelocityY(float velocityY)
+{
+	m_velocityY = velocityY;
+}
+
 void Target::resetElapsedTime()
 {
 	elapsedTime = 1.0f / 60.0f;
@@ -150,6 +160,8 @@ void Target::m_move()
 		std::cout << elapsedTime << std::endl;
 	}
 }
+
+
 
 void Target::m_checkBounds()
 {

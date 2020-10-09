@@ -3,6 +3,7 @@
 #define __TARGET__
 
 #include "DisplayObject.h"
+#include "Util.h"
 
 class Target final : public DisplayObject {
 public:
@@ -29,6 +30,7 @@ public:
 	void setIsThrown(bool check);
 	float getAngle();
 	void setAngle(float angle);
+
 	float getVelocity();
 	void setVelocity(float velocity);
 	float getVelocityX();
@@ -55,6 +57,7 @@ private:
 	
 	float deltaTime = 1.0f / 60.0f;
 	float elapsedTime = 1.0f / 60.0f;
+
 
 	void m_checkBounds();
 	void m_reset();

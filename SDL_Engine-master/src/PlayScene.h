@@ -5,9 +5,11 @@
 #include "Scene.h"
 #include "Plane.h"
 #include "Player.h"
+#include "Ship.h"
 #include "Button.h"
 #include "Target.h"
 #include "Label.h"
+#include "Util.h"
 
 class PlayScene : public Scene
 {
@@ -37,6 +39,7 @@ private:
 	
 	glm::vec2 m_mousePosition;
 
+	Ship* m_pShip;
 	Plane* m_pPlaneSprite;
 	Player* m_pPlayer;
 	Target* m_pBall;
@@ -46,6 +49,7 @@ private:
 	Button* m_pBackButton;
 	Button* m_pNextButton;
 	Label* m_pInstructionsLabel;
+	Label* m_PPMdisplay;
 
 	// Physics variables to pass into the Target/Detonator
 	float m_gravityFactor = 9.8f; // earth gravity, positive because going downwards is positive
