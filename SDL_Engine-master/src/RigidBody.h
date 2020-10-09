@@ -2,6 +2,7 @@
 #ifndef __RIGID_BODY__
 #define __RIGID_BODY__
 #include <glm/vec2.hpp>
+#include <glm/trigonometric.hpp>
 
 struct RigidBody
 {
