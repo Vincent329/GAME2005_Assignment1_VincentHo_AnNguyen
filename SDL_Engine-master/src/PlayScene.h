@@ -38,10 +38,13 @@ public:
 	float reticleDistance(float velocity, float angle);
 
 	// Angle
-	// float angleChange(float distance, float velocity);
+	float angleChange(float distance, float velocity);
 
 	// Velocity
 	float velocityAdjust(float distance, float angle);
+
+	// Target Lock
+	float maxDistanceLock(float distance);
 
 private:
 	// IMGUI Function

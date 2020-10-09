@@ -60,8 +60,7 @@ void PlayScene::update()
 	if (isMoving)
 	{
 		m_pBall->m_move();
-	}
-	
+	}	
 	updateDisplayList();
 }
 
@@ -217,7 +216,6 @@ void PlayScene::start()
 
 float PlayScene::reticleDistance(float velocity, float angle)
 {
-
 	// R = (v^2)sin(2(theta))/g
 	// remember to multiply by the scale function
 	float range = ((((velocity * m_PPM) * (velocity*m_PPM)) * sin(glm::radians(2 * angle))) / (m_gravityFactor*m_PPM));
@@ -225,12 +223,35 @@ float PlayScene::reticleDistance(float velocity, float angle)
 	return m_pBall->getTransform()->position.x + range;
 }
 
-//float PlayScene::angleChange(float distance, float velocity)
-//{
-//	float angleInRads;
-//	angleInRads = asin((m_gravityFactor * m_PPM) * (distance * m_PPM))
-//	return 0.0f;
-//}
+float PlayScene::angleChange(float distance, float velocity)
+{
+	// theta = asin((g*deltaDistance)/velocity^2)/2
+
+	float calculation = ((m_gravityFactor * m_PPM) * distance) / ((velocity * m_PPM) * (velocity * m_PPM));
+	if (calculation < -1 || calculation > 1)
+	{
+		return 45.0f;
+	}
+	else {
+		float angleInRads = asin(calculation) / 2.0f;
+		std::cout << "Angle in Rads: " << angleInRads << std::endl;
+		return glm::degrees(angleInRads);
+	}
+}
+
+// velocity lock
+// passed in delta distance, as well as the angle of kick, adjust velocity accordingly
+float PlayScene::velocityAdjust(float distance, float angle)
+{
+	// v = square root (g*d/sin2(theta))
+	// divide by PPM because velocity will be multiplied by that when move calls
+	return sqrt((((m_gravityFactor*m_PPM)*distance))/sin(glm::radians(2*angle)))/m_PPM;
+}
+
+float PlayScene::maxDistanceLock(float distance)
+{
+	return sqrt(((m_gravityFactor * m_PPM) * distance)) / m_PPM;
+}
 
 
 void PlayScene::GUI_Function()
@@ -287,7 +308,6 @@ void PlayScene::GUI_Function()
 		m_pBall->setInitialPosition(m_pBall->getTransform()->position);
 		m_pBall->resetElapsedTime();
 		m_pReticle->getTransform()->position.x = reticleDistance(m_velocity, m_Angle);
-
 	}
 
 	// Pixels per meter scale
@@ -303,6 +323,7 @@ void PlayScene::GUI_Function()
 	{
 		m_pBall->setGravityFactor(m_gravityFactor);
 		std::cout << "Gravity Factor: " << m_pBall->getGravityFactor() << std::endl;
+		m_pReticle->getTransform()->position.x = reticleDistance(m_velocity, m_Angle);
 	}
 
 	// Angle for the ball to be kicked at
@@ -329,9 +350,49 @@ void PlayScene::GUI_Function()
 		std::cout << "Initial Velocity: " << m_pBall->getVelocity() << std::endl;
 		m_pReticle->getTransform()->position.x = reticleDistance(m_velocity, m_Angle);
 	}
+	
+	// 3 lock functions
+	// Target lock (Angle set to 45, and adjust velocity accordingly given delta distance)
+	// Velocity Lock (given delta distance abd angle, adjust velocity accordingly)
+	// Angle Lock (given delta distance and velocity, adjust angle accordingly, otherwise default to 45)
 
+	if (ImGui::Button("Target Lock"))
+	{
+		deltaDistance = m_pShip->getTransform()->position.x - m_pBall->getTransform()->position.x;
+		m_Angle = 45.0f;
+		m_velocity = maxDistanceLock(deltaDistance);
+		m_pBall->setVelocity(m_velocity);
+		m_pBall->setAngle(m_Angle);
+		m_pReticle->getTransform()->position.x = reticleDistance(m_velocity, m_Angle);
+		std::cout << "New Velocity: " << m_pBall->getVelocity() << std::endl;
+	}
+
+	ImGui::SameLine();
+	if (ImGui::Button("Velocity Lock"))
+	{
+		deltaDistance = m_pShip->getTransform()->position.x - m_pBall->getTransform()->position.x;
+		std::cout << "Distance between ball and target: " << deltaDistance << std::endl;
+		m_velocity = velocityAdjust(deltaDistance, m_Angle);
+		m_pBall->setVelocity(m_velocity);
+		m_pReticle->getTransform()->position.x = reticleDistance(m_velocity, m_Angle);
+		std::cout << "New Velocity: " << m_pBall->getVelocity() << std::endl;
+	}
+
+	ImGui::SameLine();
+	if (ImGui::Button("Angle Lock"))
+	{
+		deltaDistance = m_pShip->getTransform()->position.x - m_pBall->getTransform()->position.x;
+		std::cout << "Distance between ball and target: " << deltaDistance << std::endl;
+		m_Angle = angleChange(deltaDistance, m_velocity);
+		m_pBall->setAngle(m_Angle);
+		m_pReticle->getTransform()->position.x = reticleDistance(m_velocity, m_Angle);
+		std::cout << "New Angle: " << m_pBall->getAngle() << std::endl;
+	}
+	
+	ImGui::Separator();
 	// display the player's position in with regards to the corresponding Pixels Per Meter
 	ImGui::Text("Player Distance in Meters: %f", m_pPlayer->getTransform()->position.x * m_PPM);
+	
 
 	// slider for person 
 	// CHANGE NOTES: turn this into a stormtrooper instead of player
