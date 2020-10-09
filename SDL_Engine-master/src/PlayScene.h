@@ -41,7 +41,7 @@ public:
 	// float angleChange(float distance, float velocity);
 
 	// Velocity
-	// float velocityChange(float distance, float angle);
+	float velocityAdjust(float distance, float angle);
 
 private:
 	// IMGUI Function
@@ -68,6 +68,9 @@ private:
 	float m_PPM = 5.0f; // Pixels per meter scale
 	float m_Angle = 0.0f; // Launch Angle
 	float m_velocity = 0.0f; // initial velocity
+
+	// distance between bomb and the target
+	float deltaDistance = 0;
 	/*float m_velocityX = 0.0f;
 	float m_velocityY = 0.0f;*/
 

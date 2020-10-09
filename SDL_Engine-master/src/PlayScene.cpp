@@ -185,7 +185,7 @@ void PlayScene::start()
 
 	// Player Sprite
 	m_pPlayer = new Player();
-
+	m_pPlayer->getTransform()->position = glm::vec2(100.0f, 400.0f);
 	addChild(m_pPlayer);
 	m_playerFacingRight = true;
 
@@ -193,12 +193,12 @@ void PlayScene::start()
 	m_pBall = new Target();
 	m_pBall->getTransform()->position = m_pPlayer->getTransform()->position;
 	m_pBall->getTransform()->position.x += m_pBall->getWidth();
+	m_pBall->setInitialPosition(m_pBall->getTransform()->position);
 	addChild(m_pBall);
 
 	// ship sprite for testing purposes
 	m_pShip = new Ship();
-	m_pShip->getTransform()->position.x = 700.f;
-	m_pShip->getTransform()->position.y = m_pPlayer->getTransform()->position.y;
+	m_pShip->getTransform()->position = glm::vec2(700.f, m_pPlayer->getTransform()->position.y);
 	addChild(m_pShip);
 
 	// import reticle
@@ -220,9 +220,6 @@ float PlayScene::reticleDistance(float velocity, float angle)
 
 	// R = (v^2)sin(2(theta))/g
 	// remember to multiply by the scale function
-	float testAngle = 30.0f;
-	float testVelocity = 100.0f;
-	float testRange = ((((testVelocity) * (testVelocity)) * sin(glm::radians(2 * testAngle))) / m_gravityFactor);
 	float range = ((((velocity * m_PPM) * (velocity*m_PPM)) * sin(glm::radians(2 * angle))) / (m_gravityFactor*m_PPM));
 	std::cout << "Range: " << range << std::endl;
 	return m_pBall->getTransform()->position.x + range;
@@ -340,19 +337,31 @@ void PlayScene::GUI_Function()
 	// CHANGE NOTES: turn this into a stormtrooper instead of player
 	// or have a stormtrooper and player at the same time be moved
 	static int xPlayerPos = 100;
-	if (ImGui::SliderInt("Player Position X", &xPlayerPos, 0, 400)) {
+	static int xEnemyPos = 700;
+	if (ImGui::SliderInt("Player Position X", &xPlayerPos, 0, 800)) {
 		m_pPlayer->getTransform()->position.x = xPlayerPos;
-		
 			// Ball moves along with player
 		m_pBall->getTransform()->position = glm::vec2(xPlayerPos+m_pBall->getWidth(), 400);
 		m_pBall->setInitialPosition(m_pBall->getTransform()->position);
 		std::cout << "Initial Position = X: " << m_pBall->getTransform()->position.x << " Y: " << m_pBall->getTransform()->position.y << std::endl;
 		m_pReticle->getTransform()->position.x = reticleDistance(m_velocity, m_Angle);
+
+		// check so that the bomb does not pass the enemy position
+		if (m_pBall->getTransform()->position.x >= xEnemyPos)
+		{
+			xEnemyPos = m_pBall->getTransform()->position.x;
+			m_pShip->getTransform()->position.x = m_pBall->getTransform()->position.x;
+		}
 	}
 
-	static int xEnemyPos = 700;
-	if (ImGui::SliderInt("Enemy Position X", &xEnemyPos, 400, 800)) {
+	if (ImGui::SliderInt("Enemy Position X", &xEnemyPos, 0, 800)) {
 		m_pShip->getTransform()->position.x = xEnemyPos;
+
+		if (m_pBall->getTransform()->position.x >= xEnemyPos)
+		{
+			xEnemyPos = m_pBall->getTransform()->position.x;
+			m_pShip->getTransform()->position.x = m_pBall->getTransform()->position.x;
+		}
 	}
 
 	ImGui::End();
