@@ -63,6 +63,46 @@ void Target::setIsGravityEnabled(bool check)
 	m_isGravityEnabled = check;
 }
 
+void Target::setIsThrown(bool check)
+{
+	m_isThrown = check;
+}
+
+float Target::getAngle()
+{
+	return m_Angle;
+}
+
+void Target::setAngle(float angle)
+{
+	m_Angle = angle;
+}
+
+float Target::getVelocity()
+{
+	return m_velocity;
+}
+
+void Target::setVelocity(float velocity)
+{
+	m_velocity = velocity;
+}
+
+float Target::getVelocityX()
+{
+	return m_velocityX;
+}
+
+void Target::setVelocityX(float velocityX)
+{
+	m_velocityX = velocityX;
+}
+
+void Target::resetElapsedTime()
+{
+	elapsedTime = 1.0f / 60.0f;
+}
+
 void Target::m_move()
 {
 	// multiplying velocity and acceleration in the meters
@@ -70,20 +110,22 @@ void Target::m_move()
 	getRigidBody()->velocity = glm::vec2(0.0f, 0.0f) * m_PPM;
 	getRigidBody()->acceleration = glm::vec2(0.0f, m_gravityFactor) * m_PPM;
 
-	// affect velocity with acceleration
-	if (!m_isGravityEnabled) {
-		getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
-		getRigidBody()->acceleration = glm::vec2(0.0f, 9.8f);
-		elapsedTime = 1.0f / 60.0f;
-	}
-	else {
+	if (m_isGravityEnabled && m_isThrown){
 		
 		// new logic
-		// Pf = Pi + v*t + 1/2a*t^2
-
+		// velocity components\
 		// Pfx = Pix + Vix(cosΘ)*t
 		// Pfy = Piy + Vix(sinΘ)*t + 1/2a*t^2
-		
+
+		// PPM calculations here so that we're not accidentally multiplying the velocity vector every frame
+		m_velocityX = (m_velocity * m_PPM) * cos(glm::radians(m_Angle));
+		m_velocityY = (m_velocity * m_PPM) * -sin(glm::radians(m_Angle)); // make this negative because SDL up vector needs to be negative to go up
+
+		getRigidBody()->velocity = glm::vec2(m_velocityX, m_velocityY);
+
+		// Formula for position
+		// Pf = Pi + v*t + 1/2a*t^2
+
 		getTransform()->position = getTransform()->position
 			+ (getRigidBody()->velocity * deltaTime)
 			+ ((0.5f * getRigidBody()->acceleration) * (elapsedTime * elapsedTime));
@@ -92,6 +134,7 @@ void Target::m_move()
 		std::cout << "Acceleration X: " << getRigidBody()->acceleration.x << " Y:" << getRigidBody()->acceleration.y << std::endl;
 
 		elapsedTime += deltaTime;
+		std::cout << elapsedTime << std::endl;
 	}
 }
 

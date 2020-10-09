@@ -47,10 +47,13 @@ private:
 	Button* m_pNextButton;
 	Label* m_pInstructionsLabel;
 
-	// Variables to pass into the Target/Detonator
-	float m_gravityFactor = 9.8f;
+	// Physics variables to pass into the Target/Detonator
+	float m_gravityFactor = 9.8f; // earth gravity, positive because going downwards is positive
 	float m_PPM = 10.0f; // Pixels per meter scale
-	float m_Angle = 0.0f; // anngle
+	float m_Angle = 0.0f; // Launch Angle
+	float m_velocity = 0.0f; // initial velocity
+	/*float m_velocityX = 0.0f;
+	float m_velocityY = 0.0f;*/
 
 	// timing variables
 	const int FPS = 60;

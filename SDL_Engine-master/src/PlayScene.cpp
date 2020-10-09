@@ -144,6 +144,7 @@ void PlayScene::resetValues()
 	m_gravityFactor = 9.8f;
 	m_PPM = 10.0f;
 	m_Angle = 0.0f;
+	m_velocity = 0.0f;
 }
 
 void PlayScene::start()
@@ -222,15 +223,29 @@ void PlayScene::GUI_Function()
 	
 	ImGui::Begin("Physics Controls", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
 
+	static bool isGravityEnabled = false;
 	if(ImGui::Button("Throw"))
 	{
 		isMoving = (isMoving) ? false : true;
+		m_pBall->setIsThrown(isMoving);
 		std::cout << "Is moving: " << isMoving << std::endl;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Reset Ball Position"))
+	{
+		m_pBall->getTransform()->position = m_pPlayer->getTransform()->position;
+		m_pBall->getTransform()->position.x += m_pBall->getWidth();
+		isMoving = false;
+		isGravityEnabled = false;
+		m_pBall->resetElapsedTime();
+		m_pBall->setIsThrown(isMoving);
+		m_pBall->setIsGravityEnabled(isGravityEnabled);
+
 	}
 
 	ImGui::Separator();
 
-	static bool isGravityEnabled = false;
+	
 	if (ImGui::Checkbox("Gravity Enabled", &isGravityEnabled)) // toggling gravity with a checkbox
 	{
 		m_pBall->setIsGravityEnabled(isGravityEnabled);
@@ -243,13 +258,17 @@ void PlayScene::GUI_Function()
 	{
 		isGravityEnabled = false;
 		isMoving = false;
+
 		m_pBall->setIsGravityEnabled(isGravityEnabled);
 		resetValues();
 		m_pPlayer->getTransform()->position = glm::vec2(100.0f, 400.0f);
 		m_pBall->getTransform()->position = m_pPlayer->getTransform()->position;
 		m_pBall->getTransform()->position.x += m_pBall->getWidth();
-		m_pBall->setGravityFactor(9.8f);
-		m_pBall->setPixelsPerMeter(10.0f);
+
+		m_pBall->setGravityFactor(m_gravityFactor);
+		m_pBall->setPixelsPerMeter(m_PPM);
+		m_pBall->setAngle(m_Angle);
+		m_pBall->resetElapsedTime();
 	}
 
 	if (ImGui::SliderFloat("Pixels Per Meter", &m_PPM, 0.1f, 30.0f, "%.1f"))
@@ -258,27 +277,42 @@ void PlayScene::GUI_Function()
 		std::cout << "Pixels Per Meter: " << m_pBall->getPixelsPerMeter() << std::endl;
 
 	}
-
+	
+	// changing factor of gravity 
 	if (ImGui::SliderFloat("Gravity", &m_gravityFactor, 0.1f, 30.0f, "%.1f"))
 	{
 		m_pBall->setGravityFactor(m_gravityFactor);
 		std::cout << "Gravity Factor: " << m_pBall->getGravityFactor() << std::endl;
 	}
 
-	if (ImGui::SliderFloat("Kick Angle", &m_Angle, 0.0f, 90.0f, "%.1f"))
-	{
 
+	if (ImGui::SliderFloat("Launch Angle", &m_Angle, 0.0f, 90.0f, "%.1f"))
+	{
+		m_pBall->setAngle(m_Angle);
+		std::cout << "Angle value: " << m_pBall->getAngle() << std::endl;
 	}
+	
+	if (ImGui::SliderFloat("Initial Velocity: ", &m_velocity, 0.0f, 500.0f))
+	{
+		m_pBall->setVelocity(m_velocity);
+		std::cout << "Initial Velocity: " << m_pBall->getVelocity() << std::endl;
+	}
+
+	// display the player's position in with regards to the corresponding Pixels Per Meter
+	ImGui::Text("Player Distance in Meters: %f", m_pPlayer->getTransform()->position.x * m_PPM);
 
 	// slider for person 
 	// CHANGE NOTES: turn this into a stormtrooper instead of player
+	// or have a stormtrooper and player at the same time be moved
 	static int xPlayerPos = 300;
 	if (ImGui::SliderInt("Player Position X", &xPlayerPos, 0, 800)) {
 		m_pPlayer->getTransform()->position.x = xPlayerPos;
+		
+			// Ball moves along with player
 		m_pBall->getTransform()->position = glm::vec2(xPlayerPos+m_pBall->getWidth(), 400);
 	}
 
-	// change this to an angle slider between 0 and 180
+	// change this to an angle slider between 0 and 90
 	static float velocity[2] = { 0,0 };
 	if (ImGui::SliderFloat2("Throw Speed", velocity, 0, 500))
 	{
@@ -287,11 +321,6 @@ void PlayScene::GUI_Function()
 		m_pBall->throwSpeed = glm::vec2(velocity[0], -velocity[1]);
 		
 	}
-	
-	/*static float angle = 0;
-	if (ImGui::SliderFloat("Angle", &angle, 0, 90.0f))
-	{
-	}*/
 
 	ImGui::End();
 	ImGui::EndFrame();

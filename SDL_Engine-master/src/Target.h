@@ -20,12 +20,25 @@ public:
 	void doThrow();
 	void m_move();
 
-	// Getter and Setter
+	// Getter and Setter for Physics Factors
 	float getGravityFactor();
 	void setGravityFactor(float gFactor);
 	float getPixelsPerMeter();
 	void setPixelsPerMeter(float ppm);
 	void setIsGravityEnabled(bool check);
+	void setIsThrown(bool check);
+	float getAngle();
+	void setAngle(float angle);
+	float getVelocity();
+	void setVelocity(float velocity);
+	float getVelocityX();
+	void setVelocityX(float velocityX);
+	float getVelocityY();
+	void setVelocityY(float velocityY);
+
+	
+	// Resetting purposes
+	void resetElapsedTime();
 
 private:
 	// Variables for physics
@@ -37,6 +50,7 @@ private:
 	float m_velocityY = 0.0f;
 
 	bool m_isGravityEnabled = false;
+	bool m_isThrown = false;
 	
 	float deltaTime = 1.0f / 60.0f;
 	float elapsedTime = 1.0f / 60.0f;
