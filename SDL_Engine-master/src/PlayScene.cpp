@@ -25,6 +25,33 @@ void PlayScene::draw()
 	{
 		GUI_Function();
 	}
+
+	// Scale factorrepresented as white line on bottom left
+	m_PPMdisplay->setText("PPM: " + std::to_string(m_PPM));
+	Util::DrawLine(glm::vec2(50.0f, 550.0f), glm::vec2(50.0f + m_PPM, 550.0f), glm::vec4(1.0f));
+	Util::DrawLine(glm::vec2(50.0f, 551.0f), glm::vec2(50.0f + m_PPM, 551.0f), glm::vec4(1.0f));
+	Util::DrawLine(glm::vec2(50.0f, 552.0f), glm::vec2(50.0f + m_PPM, 552.0f), glm::vec4(1.0f));
+	Util::DrawLine(glm::vec2(50.0f, 553.0f), glm::vec2(50.0f + m_PPM, 553.0f), glm::vec4(1.0f));
+	Util::DrawLine(glm::vec2(50.0f, 554.0f), glm::vec2(50.0f + m_PPM, 554.0f), glm::vec4(1.0f));
+	Util::DrawLine(glm::vec2(50.0f, 555.0f), glm::vec2(50.0f + m_PPM, 555.0f), glm::vec4(1.0f));
+
+	// Drawing a vector line to Simulate aiming vector
+	if (!isMoving)
+	{
+		Util::DrawLine(glm::vec2(m_pBall->getTransform()->position),
+			glm::vec2(m_pBall->getTransform()->position.x + 30 * cos(glm::radians(m_Angle)),
+				m_pBall->getTransform()->position.y + 30 * -sin(glm::radians(m_Angle))),
+			glm::vec4(1.0f));
+		Util::DrawLine(glm::vec2(m_pBall->getTransform()->position.x, m_pBall->getTransform()->position.y + 1),
+			glm::vec2(m_pBall->getTransform()->position.x + 30 * cos(glm::radians(m_Angle)),
+				m_pBall->getTransform()->position.y + 30 * -sin(glm::radians(m_Angle))),
+			glm::vec4(1.0f));
+		Util::DrawLine(glm::vec2(m_pBall->getTransform()->position.x, m_pBall->getTransform()->position.y + 2),
+			glm::vec2(m_pBall->getTransform()->position.x + 30 * cos(glm::radians(m_Angle)),
+				m_pBall->getTransform()->position.y + 30 * -sin(glm::radians(m_Angle))),
+			glm::vec4(1.0f));
+	}
+
 	SDL_SetRenderDrawColor(Renderer::Instance()->getRenderer(), 255, 255, 255, 255);
 }
 
@@ -34,6 +61,7 @@ void PlayScene::update()
 	{
 		m_pBall->m_move();
 	}
+	
 	updateDisplayList();
 }
 
@@ -142,7 +170,7 @@ void PlayScene::setPixelsPerMeter(float ppm)
 void PlayScene::resetValues()
 {
 	m_gravityFactor = 9.8f;
-	m_PPM = 10.0f;
+	m_PPM = 5.0f;
 	m_Angle = 0.0f;
 	m_velocity = 0.0f;
 }
@@ -150,12 +178,14 @@ void PlayScene::resetValues()
 void PlayScene::start()
 {
 	TextureManager::Instance()->load("../Assets/textures/Background.png", "background");
+	const SDL_Color white = { 255, 255, 255, 255 };
 
 	// Set GUI Title
 	m_guiTitle = "Play Scene";	
 
 	// Player Sprite
 	m_pPlayer = new Player();
+
 	addChild(m_pPlayer);
 	m_playerFacingRight = true;
 
@@ -165,52 +195,62 @@ void PlayScene::start()
 	m_pBall->getTransform()->position.x += m_pBall->getWidth();
 	addChild(m_pBall);
 
+	// ship sprite for testing purposes
+	m_pShip = new Ship();
+	m_pShip->getTransform()->position.x = 700.f;
+	m_pShip->getTransform()->position.y = m_pPlayer->getTransform()->position.y;
+	addChild(m_pShip);
 
-	// Back Button
-	m_pBackButton = new Button("../Assets/textures/backButton.png", "backButton", BACK_BUTTON);
-	m_pBackButton->getTransform()->position = glm::vec2(50.0f, 550.0f);
-	m_pBackButton->addEventListener(CLICK, [&]()-> void
-	{
-		m_pBackButton->setActive(false);
-		TheGame::Instance()->changeSceneState(START_SCENE);
-	});
+	// get rid of buttons
 
-	m_pBackButton->addEventListener(MOUSE_OVER, [&]()->void
-	{
-		m_pBackButton->setAlpha(128);
-	});
+	//// Back Button
+	//m_pBackButton = new Button("../Assets/textures/backButton.png", "backButton", BACK_BUTTON);
+	//m_pBackButton->getTransform()->position = glm::vec2(50.0f, 550.0f);
+	//m_pBackButton->addEventListener(CLICK, [&]()-> void
+	//{
+	//	m_pBackButton->setActive(false);
+	//	TheGame::Instance()->changeSceneState(START_SCENE);
+	//});
 
-	m_pBackButton->addEventListener(MOUSE_OUT, [&]()->void
-	{
-		m_pBackButton->setAlpha(255);
-	});
-	addChild(m_pBackButton);
+	//m_pBackButton->addEventListener(MOUSE_OVER, [&]()->void
+	//{
+	//	m_pBackButton->setAlpha(128);
+	//});
 
-	// Next Button
-	m_pNextButton = new Button("../Assets/textures/nextButton.png", "nextButton", NEXT_BUTTON);
-	m_pNextButton->getTransform()->position = glm::vec2(750.0f, 550.0f);
-	m_pNextButton->addEventListener(CLICK, [&]()-> void
-	{
-		m_pNextButton->setActive(false);
-		TheGame::Instance()->changeSceneState(END_SCENE);
-	});
+	//m_pBackButton->addEventListener(MOUSE_OUT, [&]()->void
+	//{
+	//	m_pBackButton->setAlpha(255);
+	//});
+	//addChild(m_pBackButton);
 
-	m_pNextButton->addEventListener(MOUSE_OVER, [&]()->void
-	{
-		m_pNextButton->setAlpha(128);
-	});
+	//// Next Button...
+	//m_pNextButton = new Button("../Assets/textures/nextButton.png", "nextButton", NEXT_BUTTON);
+	//m_pNextButton->getTransform()->position = glm::vec2(750.0f, 550.0f);
+	//m_pNextButton->addEventListener(CLICK, [&]()-> void
+	//{
+	//	m_pNextButton->setActive(false);
+	//	TheGame::Instance()->changeSceneState(END_SCENE);
+	//});
 
-	m_pNextButton->addEventListener(MOUSE_OUT, [&]()->void
-	{
-		m_pNextButton->setAlpha(255);
-	});
+	//m_pNextButton->addEventListener(MOUSE_OVER, [&]()->void
+	//{
+	//	m_pNextButton->setAlpha(128);
+	//});
 
-	addChild(m_pNextButton);
+	//m_pNextButton->addEventListener(MOUSE_OUT, [&]()->void
+	//{
+	//	m_pNextButton->setAlpha(255);
+	//});
+
+	//addChild(m_pNextButton{);
 
 	/* Instructions Label */
 	m_pInstructionsLabel = new Label("Press the backtick (`) character to toggle Debug View", "Consolas");
-	m_pInstructionsLabel->getTransform()->position = glm::vec2(Config::SCREEN_WIDTH * 0.5f, 500.0f);
+	m_pInstructionsLabel->getTransform()->position = glm::vec2(Config::SCREEN_WIDTH * 0.5f, 520.0f);
 	addChild(m_pInstructionsLabel);
+
+	m_PPMdisplay = new Label("PPM: " + std::to_string(m_PPM), "Consolas", 10, white, glm::vec2(50.0f, 540.0f));
+	addChild(m_PPMdisplay);
 }
 
 void PlayScene::GUI_Function()
@@ -223,7 +263,6 @@ void PlayScene::GUI_Function()
 	
 	ImGui::Begin("Physics Controls", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
 
-	static bool isGravityEnabled = false;
 	if(ImGui::Button("Throw"))
 	{
 		isMoving = (isMoving) ? false : true;
@@ -236,41 +275,39 @@ void PlayScene::GUI_Function()
 		m_pBall->getTransform()->position = m_pPlayer->getTransform()->position;
 		m_pBall->getTransform()->position.x += m_pBall->getWidth();
 		isMoving = false;
-		isGravityEnabled = false;
 		m_pBall->resetElapsedTime();
 		m_pBall->setIsThrown(isMoving);
-		m_pBall->setIsGravityEnabled(isGravityEnabled);
-
 	}
 
 	ImGui::Separator();
 
-	
+	static bool isGravityEnabled = false;
 	if (ImGui::Checkbox("Gravity Enabled", &isGravityEnabled)) // toggling gravity with a checkbox
 	{
 		m_pBall->setIsGravityEnabled(isGravityEnabled);
-		
 	}
 
 	ImGui::SameLine();
 
+	// Resetting values for elements on screen
 	if (ImGui::Button("Reset All"))
 	{
 		isGravityEnabled = false;
 		isMoving = false;
-
 		m_pBall->setIsGravityEnabled(isGravityEnabled);
 		resetValues();
+
+		// resetting position values
 		m_pPlayer->getTransform()->position = glm::vec2(100.0f, 400.0f);
 		m_pBall->getTransform()->position = m_pPlayer->getTransform()->position;
 		m_pBall->getTransform()->position.x += m_pBall->getWidth();
-
 		m_pBall->setGravityFactor(m_gravityFactor);
 		m_pBall->setPixelsPerMeter(m_PPM);
 		m_pBall->setAngle(m_Angle);
 		m_pBall->resetElapsedTime();
 	}
 
+	// Pixels per meter scale
 	if (ImGui::SliderFloat("Pixels Per Meter", &m_PPM, 0.1f, 30.0f, "%.1f"))
 	{
 		m_pBall->setPixelsPerMeter(m_PPM);
@@ -278,20 +315,33 @@ void PlayScene::GUI_Function()
 
 	}
 	
-	// changing factor of gravity 
+	// Modifiable Gravity Coefficient
 	if (ImGui::SliderFloat("Gravity", &m_gravityFactor, 0.1f, 30.0f, "%.1f"))
 	{
 		m_pBall->setGravityFactor(m_gravityFactor);
 		std::cout << "Gravity Factor: " << m_pBall->getGravityFactor() << std::endl;
 	}
 
-
+	// Angle for the ball to be kicked at
+	// Change for high angle and low angle launch
+	
 	if (ImGui::SliderFloat("Launch Angle", &m_Angle, 0.0f, 90.0f, "%.1f"))
 	{
 		m_pBall->setAngle(m_Angle);
 		std::cout << "Angle value: " << m_pBall->getAngle() << std::endl;
 	}
+
+	static bool switchAngle = false;
+	if (ImGui::Button("Switch Angle"))
+	{
+		m_Angle = 90 - m_Angle;
+		m_pBall->setAngle(m_Angle);
+		std::cout << "Angle value: " << m_pBall->getAngle() << std::endl;
+	}
 	
+
+	
+	// Velocity for the ball to be kicked
 	if (ImGui::SliderFloat("Initial Velocity: ", &m_velocity, 0.0f, 500.0f))
 	{
 		m_pBall->setVelocity(m_velocity);
@@ -304,22 +354,17 @@ void PlayScene::GUI_Function()
 	// slider for person 
 	// CHANGE NOTES: turn this into a stormtrooper instead of player
 	// or have a stormtrooper and player at the same time be moved
-	static int xPlayerPos = 300;
-	if (ImGui::SliderInt("Player Position X", &xPlayerPos, 0, 800)) {
+	static int xPlayerPos = 100;
+	if (ImGui::SliderInt("Player Position X", &xPlayerPos, 0, 400)) {
 		m_pPlayer->getTransform()->position.x = xPlayerPos;
 		
 			// Ball moves along with player
 		m_pBall->getTransform()->position = glm::vec2(xPlayerPos+m_pBall->getWidth(), 400);
 	}
 
-	// change this to an angle slider between 0 and 90
-	static float velocity[2] = { 0,0 };
-	if (ImGui::SliderFloat2("Throw Speed", velocity, 0, 500))
-	{
-		m_pBall->throwPosition = m_pPlayer->getTransform()->position;
-		// CHANGE THIS LOGIC, NEEDS TO THROW BY ANGLE
-		m_pBall->throwSpeed = glm::vec2(velocity[0], -velocity[1]);
-		
+	static int xEnemyPos = 700;
+	if (ImGui::SliderInt("Enemy Position X", &xEnemyPos, 400, 800)) {
+		m_pShip->getTransform()->position.x = xEnemyPos;
 	}
 
 	ImGui::End();
