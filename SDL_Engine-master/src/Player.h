@@ -21,6 +21,7 @@ public:
 
 private:
 	void m_buildAnimations();
+	float m_currentHeading;
 
 	PlayerAnimationState m_currentAnimationState;
 };

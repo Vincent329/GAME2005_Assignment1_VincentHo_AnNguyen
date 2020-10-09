@@ -1,22 +1,22 @@
-#include "ship.h"
+#include "Enemy.h"
 #include "glm/gtx/string_cast.hpp"
 #include "PlayScene.h"
 #include "TextureManager.h"
 #include "Util.h"
 
-Ship::Ship() : m_maxSpeed(10.0f)
+Enemy::Enemy() : m_maxSpeed(10.0f)
 {
-	TextureManager::Instance()->load("../Assets/textures/ship3.png","ship");
+	TextureManager::Instance()->load("../Assets/textures/trooper.png","stormtrooper");
 
-	auto size = TextureManager::Instance()->getTextureSize("ship");
+	auto size = TextureManager::Instance()->getTextureSize("stormtrooper");
 	setWidth(size.x);
 	setHeight(size.y);
 
 	getTransform()->position = glm::vec2(400.0f, 300.0f);
 	getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
-	getRigidBody()->acceleration = glm::vec2(0.0f, 0.0f);
+	getRigidBody()->acceleration = glm::vec2(0.0f, 0.0f); 
 	getRigidBody()->isColliding = false;
-	setType(SHIP);
+	setType(ENEMY);
 	
 	m_currentHeading = 0.0f; // current facing angle
 	m_currentDirection = glm::vec2(1.0f, 0.0f); // facing right
@@ -24,31 +24,31 @@ Ship::Ship() : m_maxSpeed(10.0f)
 }
 
 
-Ship::~Ship()
+Enemy::~Enemy()
 = default;
 
-void Ship::draw()
+void Enemy::draw()
 {
 	// alias for x and y
 	const auto x = getTransform()->position.x;
 	const auto y = getTransform()->position.y;
 
 	// draw the ship
-	TextureManager::Instance()->draw("ship", x, y, m_currentHeading, 255, true);
+	TextureManager::Instance()->draw("stormtrooper", x, y, m_currentHeading, 255, true);
 }
 
 
-void Ship::update()
+void Enemy::update()
 {
 	move();
 	m_checkBounds();
 }
 
-void Ship::clean()
+void Enemy::clean()
 {
 }
 
-void Ship::turnRight()
+void Enemy::turnRight()
 {
 	m_currentHeading += m_turnRate;
 	if (m_currentHeading >= 360) 
@@ -58,7 +58,7 @@ void Ship::turnRight()
 	m_changeDirection();
 }
 
-void Ship::turnLeft()
+void Enemy::turnLeft()
 {
 	m_currentHeading -= m_turnRate;
 	if (m_currentHeading < 0)
@@ -69,56 +69,56 @@ void Ship::turnLeft()
 	m_changeDirection();
 }
 
-void Ship::moveForward()
+void Enemy::moveForward()
 {
 	getRigidBody()->velocity = m_currentDirection * m_maxSpeed;
 }
 
-void Ship::moveBack()
+void Enemy::moveBack()
 {
 	getRigidBody()->velocity = m_currentDirection * -m_maxSpeed;
 }
 
-void Ship::move()
+void Enemy::move()
 {
 	getTransform()->position += getRigidBody()->velocity;
 	getRigidBody()->velocity *= 0.9f;
 }
 
-glm::vec2 Ship::getTargetPosition() const
+glm::vec2 Enemy::getTargetPosition() const
 {
 	return m_targetPosition;
 }
 
-glm::vec2 Ship::getCurrentDirection() const
+glm::vec2 Enemy::getCurrentDirection() const
 {
 	return m_currentDirection;
 }
 
-float Ship::getMaxSpeed() const
+float Enemy::getMaxSpeed() const
 {
 	return m_maxSpeed;
 }
 
-void Ship::setTargetPosition(glm::vec2 newPosition)
+void Enemy::setTargetPosition(glm::vec2 newPosition)
 {
 	m_targetPosition = newPosition;
 
 }
 
-void Ship::setCurrentDirection(glm::vec2 newDirection)
+void Enemy::setCurrentDirection(glm::vec2 newDirection)
 {
 	m_currentDirection = newDirection;
 }
 
-void Ship::setMaxSpeed(float newSpeed)
+void Enemy::setMaxSpeed(float newSpeed)
 {
 	m_maxSpeed = newSpeed;
 }
 
 
 
-void Ship::m_checkBounds()
+void Enemy::m_checkBounds()
 {
 
 	if (getTransform()->position.x > Config::SCREEN_WIDTH)
@@ -143,7 +143,7 @@ void Ship::m_checkBounds()
 
 }
 
-void Ship::m_reset()
+void Enemy::m_reset()
 {
 	getRigidBody()->isColliding = false;
 	const int halfWidth = getWidth() * 0.5f;
@@ -152,12 +152,12 @@ void Ship::m_reset()
 	getTransform()->position = glm::vec2(xComponent, yComponent);
 }
 
-void Ship::m_changeDirection()
+void Enemy::m_changeDirection()
 {
 	const auto x = cos(m_currentHeading * Util::Deg2Rad);
 	const auto y = sin(m_currentHeading * Util::Deg2Rad);
 	m_currentDirection = glm::vec2(x, y);
 
-	glm::vec2 size = TextureManager::Instance()->getTextureSize("ship");
+	glm::vec2 size = TextureManager::Instance()->getTextureSize("stormtrooper");
 }
 

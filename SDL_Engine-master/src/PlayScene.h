@@ -5,7 +5,7 @@
 #include "Scene.h"
 #include "Plane.h"
 #include "Player.h"
-#include "Ship.h"
+#include "Enemy.h"
 #include "Button.h"
 #include "Target.h"
 #include "Reticle.h"
@@ -54,7 +54,7 @@ private:
 	glm::vec2 m_mousePosition;
 
 	Reticle* m_pReticle;
-	Ship* m_pShip; // for testing purposes
+	Enemy* m_pEnemy; // for testing purposes
 	Plane* m_pPlaneSprite;
 	Player* m_pPlayer;
 	Target* m_pBall;

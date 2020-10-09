@@ -5,11 +5,11 @@
 #include "DisplayObject.h"
 #include "TextureManager.h"
 
-class Ship final : public DisplayObject
+class Enemy final : public DisplayObject
 {
 public:
-	Ship();
-	~Ship();
+	Enemy();
+	~Enemy();
 
 	// Inherited via GameObject
 	void draw() override;

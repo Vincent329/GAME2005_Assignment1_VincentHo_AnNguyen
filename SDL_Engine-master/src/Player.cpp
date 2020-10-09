@@ -3,7 +3,7 @@
 
 Player::Player(): m_currentAnimationState(PLAYER_IDLE_RIGHT)
 {
-	TextureManager::Instance()->loadSpriteSheet(
+	/*TextureManager::Instance()->loadSpriteSheet(
 		"../Assets/sprites/atlas.txt",
 		"../Assets/sprites/atlas.png", 
 		"spritesheet");
@@ -22,7 +22,21 @@ Player::Player(): m_currentAnimationState(PLAYER_IDLE_RIGHT)
 	getRigidBody()->isColliding = false;
 	setType(PLAYER);
 
-	m_buildAnimations();
+	m_buildAnimations();*/
+
+	TextureManager::Instance()->load("../Assets/textures/wk.png", "wookie");
+
+	auto size = TextureManager::Instance()->getTextureSize("wookie");
+	setWidth(size.x);
+	setHeight(size.y);
+
+	getTransform()->position = glm::vec2(400.0f, 300.0f);
+	getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
+	getRigidBody()->acceleration = glm::vec2(0.0f, 0.0f);
+	getRigidBody()->isColliding = false;
+	setType(PLAYER);
+
+	float m_currentHeading = 0.0f;
 }
 
 Player::~Player()
@@ -34,8 +48,10 @@ void Player::draw()
 	const auto x = getTransform()->position.x;
 	const auto y = getTransform()->position.y;
 
+	TextureManager::Instance()->draw("wookie", x, y, m_currentHeading, 255, true);
+	
 	// draw the player according to animation state
-	switch(m_currentAnimationState)
+	/*switch(m_currentAnimationState)
 	{
 	case PLAYER_IDLE_RIGHT:
 		TextureManager::Instance()->playAnimation("spritesheet", getAnimation("idle"),
@@ -55,7 +71,7 @@ void Player::draw()
 		break;
 	default:
 		break;
-	}
+	}*/
 	
 }
 

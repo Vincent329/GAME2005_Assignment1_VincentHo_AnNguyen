@@ -196,9 +196,9 @@ void PlayScene::start()
 	addChild(m_pBall);
 
 	// ship sprite for testing purposes
-	m_pShip = new Ship();
-	m_pShip->getTransform()->position = glm::vec2(700.f, m_pPlayer->getTransform()->position.y);
-	addChild(m_pShip);
+	m_pEnemy = new Enemy();
+	m_pEnemy->getTransform()->position = glm::vec2(700.f, m_pPlayer->getTransform()->position.y);
+	addChild(m_pEnemy);
 
 	// import reticle
 	m_pReticle = new Reticle();
@@ -358,7 +358,7 @@ void PlayScene::GUI_Function()
 
 	if (ImGui::Button("Target Lock"))
 	{
-		deltaDistance = m_pShip->getTransform()->position.x - m_pBall->getTransform()->position.x;
+		deltaDistance = m_pEnemy->getTransform()->position.x - m_pBall->getTransform()->position.x;
 		m_Angle = 45.0f;
 		m_velocity = maxDistanceLock(deltaDistance);
 		m_pBall->setVelocity(m_velocity);
@@ -370,7 +370,7 @@ void PlayScene::GUI_Function()
 	ImGui::SameLine();
 	if (ImGui::Button("Velocity Lock"))
 	{
-		deltaDistance = m_pShip->getTransform()->position.x - m_pBall->getTransform()->position.x;
+		deltaDistance = m_pEnemy->getTransform()->position.x - m_pBall->getTransform()->position.x;
 		std::cout << "Distance between ball and target: " << deltaDistance << std::endl;
 		m_velocity = velocityAdjust(deltaDistance, m_Angle);
 		m_pBall->setVelocity(m_velocity);
@@ -381,7 +381,7 @@ void PlayScene::GUI_Function()
 	ImGui::SameLine();
 	if (ImGui::Button("Angle Lock"))
 	{
-		deltaDistance = m_pShip->getTransform()->position.x - m_pBall->getTransform()->position.x;
+		deltaDistance = m_pEnemy->getTransform()->position.x - m_pBall->getTransform()->position.x;
 		std::cout << "Distance between ball and target: " << deltaDistance << std::endl;
 		m_Angle = angleChange(deltaDistance, m_velocity);
 		m_pBall->setAngle(m_Angle);
@@ -411,17 +411,17 @@ void PlayScene::GUI_Function()
 		if (m_pBall->getTransform()->position.x >= xEnemyPos)
 		{
 			xEnemyPos = m_pBall->getTransform()->position.x;
-			m_pShip->getTransform()->position.x = m_pBall->getTransform()->position.x;
+			m_pEnemy->getTransform()->position.x = m_pBall->getTransform()->position.x;
 		}
 	}
 
 	if (ImGui::SliderInt("Enemy Position X", &xEnemyPos, 0, 800)) {
-		m_pShip->getTransform()->position.x = xEnemyPos;
+		m_pEnemy->getTransform()->position.x = xEnemyPos;
 
 		if (m_pBall->getTransform()->position.x >= xEnemyPos)
 		{
 			xEnemyPos = m_pBall->getTransform()->position.x;
-			m_pShip->getTransform()->position.x = m_pBall->getTransform()->position.x;
+			m_pEnemy->getTransform()->position.x = m_pBall->getTransform()->position.x;
 		}
 	}
 

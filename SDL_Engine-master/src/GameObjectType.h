@@ -3,7 +3,7 @@
 #define __GAME_OBJECT_TYPE__
 enum GameObjectType {
 	NONE = -1,
-	SHIP,
+	ENEMY,
 	TARGET,
 	RETICLE,
 	PLAYER,
