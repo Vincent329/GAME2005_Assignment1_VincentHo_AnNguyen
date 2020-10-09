@@ -18,6 +18,7 @@ PlayScene::~PlayScene()
 
 void PlayScene::draw()
 {
+	// draw the background
 	TextureManager::Instance()->draw("background", 400.0f, 300.0f, 0, 255, true, SDL_FLIP_NONE);
 
 	drawDisplayList();
@@ -146,33 +147,8 @@ void PlayScene::handleEvents()
 		TheGame::Instance()->changeSceneState(END_SCENE);
 	}
 }
-//float PlayScene::getGravityFactor()
-//{
-//	return m_gravityFactor;
-//}
-//
-//void PlayScene::setGravityFactor(float gFactor)
-//{
-//	m_gravityFactor = gFactor;
-//}
-//
-//float PlayScene::getPixelsPerMeter()
-//{
-//	return m_PPM;
-//}
-//
-//void PlayScene::setPixelsPerMeter(float ppm)
-//{
-//	m_PPM = ppm;
-//}
 
-void PlayScene::resetValues()
-{
-	m_gravityFactor = 9.8f;
-	m_PPM = 5.0f;
-	m_Angle = 0.0f;
-	m_velocity = 0.0f;
-}
+
 
 void PlayScene::start()
 {
@@ -206,12 +182,22 @@ void PlayScene::start()
 	addChild(m_pReticle);
 
 	/* Instructions Label */
-	m_pInstructionsLabel = new Label("Press the backtick (`) character to toggle Debug View", "Consolas");
+	m_pInstructionsLabel = new Label("Press the backtick (`) character to toggle Debug View", "Consolas", 20, white);
 	m_pInstructionsLabel->getTransform()->position = glm::vec2(Config::SCREEN_WIDTH * 0.5f, 520.0f);
 	addChild(m_pInstructionsLabel);
 
+	// Pixels Per Meter Label
 	m_PPMdisplay = new Label("PPM: " + std::to_string(m_PPM), "Consolas", 10, white, glm::vec2(50.0f, 540.0f));
 	addChild(m_PPMdisplay);
+}
+
+// Reset Values
+void PlayScene::resetValues()
+{
+	m_gravityFactor = 9.8f;
+	m_PPM = 5.0f;
+	m_Angle = 0.0f;
+	m_velocity = 0.0f;
 }
 
 float PlayScene::reticleDistance(float velocity, float angle)
@@ -250,6 +236,8 @@ float PlayScene::velocityAdjust(float distance, float angle)
 
 float PlayScene::maxDistanceLock(float distance)
 {
+	// since this will just use the maximum distance (sin(2(45)) = 1
+	// v = sqrt(g*d)
 	return sqrt(((m_gravityFactor * m_PPM) * distance)) / m_PPM;
 }
 
@@ -264,24 +252,29 @@ void PlayScene::GUI_Function()
 	
 	ImGui::Begin("Physics Controls", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
 
+	// The Throw Function
 	if(ImGui::Button("Throw"))
 	{
 		isMoving = (isMoving) ? false : true;
 		m_pBall->setIsThrown(isMoving);
 		std::cout << "Is moving: " << isMoving << std::endl;
 	}
+
+	// Resets the position of the ball as well as the elapsed time so that the acceleration resets
 	ImGui::SameLine();
 	if (ImGui::Button("Reset Ball Position"))
 	{
+		// resets position of ball
 		m_pBall->getTransform()->position = m_pPlayer->getTransform()->position;
 		m_pBall->getTransform()->position.x += m_pBall->getWidth();
-		isMoving = false;
-		m_pBall->resetElapsedTime();
-		m_pBall->setIsThrown(isMoving);
+		isMoving = false; // Makes sure that throw is reset
+		m_pBall->resetElapsedTime(); // reset the elapsed time for acceleration purposes
+		m_pBall->setIsThrown(isMoving); // send boolean to ball class
 	}
 
 	ImGui::Separator();
 
+	// Gravity Toggle, If user triggers Throw, ball should just move in a straight line
 	static bool isGravityEnabled = false;
 	if (ImGui::Checkbox("Gravity Enabled", &isGravityEnabled)) // toggling gravity with a checkbox
 	{
@@ -327,8 +320,6 @@ void PlayScene::GUI_Function()
 	}
 
 	// Angle for the ball to be kicked at
-	// Change for high angle and low angle launch
-	
 	if (ImGui::SliderFloat("Launch Angle", &m_Angle, 0.0f, 90.0f, "%.1f"))
 	{
 		m_pBall->setAngle(m_Angle);
@@ -336,6 +327,7 @@ void PlayScene::GUI_Function()
 		m_pReticle->getTransform()->position.x = reticleDistance(m_velocity, m_Angle);
 	}
 
+	// Change for high angle and low angle launch
 	if (ImGui::Button("Switch Angle"))
 	{
 		m_Angle = 90 - m_Angle;
@@ -355,7 +347,6 @@ void PlayScene::GUI_Function()
 	// Target lock (Angle set to 45, and adjust velocity accordingly given delta distance)
 	// Velocity Lock (given delta distance abd angle, adjust velocity accordingly)
 	// Angle Lock (given delta distance and velocity, adjust angle accordingly, otherwise default to 45)
-
 	if (ImGui::Button("Target Lock"))
 	{
 		deltaDistance = m_pEnemy->getTransform()->position.x - m_pBall->getTransform()->position.x;
@@ -390,13 +381,11 @@ void PlayScene::GUI_Function()
 	}
 	
 	ImGui::Separator();
+
 	// display the player's position in with regards to the corresponding Pixels Per Meter
 	ImGui::Text("Player Distance in Meters: %f", m_pPlayer->getTransform()->position.x * m_PPM);
 	
-
-	// slider for person 
-	// CHANGE NOTES: turn this into a stormtrooper instead of player
-	// or have a stormtrooper and player at the same time be moved
+	// Position Slider for Player  
 	static int xPlayerPos = 100;
 	static int xEnemyPos = 700;
 	if (ImGui::SliderInt("Player Position X", &xPlayerPos, 0, 800)) {
@@ -415,9 +404,11 @@ void PlayScene::GUI_Function()
 		}
 	}
 
+	// Slider for Enemy Position
 	if (ImGui::SliderInt("Enemy Position X", &xEnemyPos, 0, 800)) {
 		m_pEnemy->getTransform()->position.x = xEnemyPos;
 
+		// Checking so that the enemy does not pass the bomb
 		if (m_pBall->getTransform()->position.x >= xEnemyPos)
 		{
 			xEnemyPos = m_pBall->getTransform()->position.x;

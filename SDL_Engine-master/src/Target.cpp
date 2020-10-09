@@ -127,7 +127,7 @@ void Target::m_move()
 {
 	// multiplying velocity and acceleration in the meters
 	std::cout << "Calling Move" << std::endl;
-	
+
 	getRigidBody()->velocity = glm::vec2(0.0f, 0.0f) * m_PPM;
 	getRigidBody()->acceleration = glm::vec2(0.0f, m_gravityFactor) * m_PPM;
 
@@ -135,7 +135,7 @@ void Target::m_move()
 	{
 		m_velocityX = (m_velocity * m_PPM) * cos(glm::radians(m_Angle));
 		m_velocityY = (m_velocity * m_PPM) * -sin(glm::radians(m_Angle));
-		
+
 		getRigidBody()->velocity = glm::vec2(m_velocityX, m_velocityY);
 
 		getTransform()->position = getTransform()->position
@@ -144,8 +144,8 @@ void Target::m_move()
 		std::cout << "Velocity X: " << getRigidBody()->velocity.x << " Y:" << getRigidBody()->velocity.y << std::endl;
 		std::cout << "Acceleration X: " << getRigidBody()->acceleration.x << " Y:" << getRigidBody()->acceleration.y << std::endl;
 	}
-	else if (m_isGravityEnabled && m_isThrown){
-		
+	else if (m_isGravityEnabled && m_isThrown) {
+
 		// new logic
 		// velocity components
 		// Pfx = Pix + Vix(cosΘ)*t
@@ -176,7 +176,6 @@ void Target::m_move()
 }
 
 
-
 void Target::m_checkBounds()
 {
 }
@@ -185,8 +184,3 @@ void Target::m_reset()
 {
 }
 
-void Target::doThrow()
-{
-	getTransform()->position = throwPosition;
-	getRigidBody()->velocity = throwSpeed;
-}
