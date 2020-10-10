@@ -248,7 +248,7 @@ void PlayScene::GUI_Function()
 	ImGui::NewFrame();
 
 	// See examples by uncommenting the following - also look at imgui_demo.cpp in the IMGUI filter
-	ImGui::ShowDemoWindow();
+	// ImGui::ShowDemoWindow();
 	
 	ImGui::Begin("Physics Controls", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
 
